@@ -28,6 +28,7 @@ class Category:
 	def __init__(self, nm):
 		self.name = nm
 		self.domains = dict()
+		self.all = Domain('all')
 
 	def add_template(self, templ):
 		end_of_domain = templ.find(' ')
@@ -48,10 +49,20 @@ class Category:
 
 	def print_statistics(self):
 		print(self.name)
+		print("Total in catogory", len(self.all.titles))
+		for word in self.all.compute_statistics():
+			print("\t\t" + str(word[0]), word[1])
 		for dm in self.compute_statistics():
-			print(dm[0])
+			print("\t" + dm[0])
 			for word in dm[1]:
-				print("\t" + str(word[0]), word[1])
+				print("\t\t" + str(word[0]), word[1])
+
+	def add_title(self, url_title):
+		flag = False
+		for dm in self.domains:
+			flag = flag or self.domains[dm].try_to_add_title(url_title)
+		if flag:
+			self.all.titles.append(url_title[1])
 
 
 """Load categories from text file
@@ -96,8 +107,7 @@ def feedCategories(filename):
 	for i in open(filename, 'r', encoding="utf-8"):
 		i = i[:-1]
 		for c in cats:
-			for dm in c.domains.values():
-				dm.try_to_add_title(i.split('\t'))
+			c.add_title(i.split('\t'))
 
 def main():
 	parser = argparse.ArgumentParser(description="")
