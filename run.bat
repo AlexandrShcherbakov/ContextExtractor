@@ -1,0 +1,1 @@
+python ContextExtractor.py -i data\elect.txt -s data\elect_stop.txt -ul 5 -wl 5 -ml 3 > data\elect_out.txt
